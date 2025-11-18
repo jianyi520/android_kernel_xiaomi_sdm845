@@ -3,7 +3,7 @@
 snd-soc-hostless-pcm-objs := msm-pcm-hostless.o
 obj-$(CONFIG_SND_SOC_MSM_HOSTLESS_PCM) += snd-soc-hostless-pcm.o
 
-
+ccflags-y += -I$(srctree)/techpack/audio/asoc/
 snd-soc-qdsp6v2-objs := msm-dai-fe.o
 obj-$(CONFIG_SND_SOC_QDSP6V2) += snd-soc-qdsp6v2.o
 

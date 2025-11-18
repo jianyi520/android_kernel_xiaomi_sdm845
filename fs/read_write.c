@@ -444,6 +444,7 @@ static ssize_t new_sync_read(struct file *filp, char __user *buf, size_t len, lo
 	return ret;
 }
 
+
 ssize_t __vfs_read(struct file *file, char __user *buf, size_t count,
 		   loff_t *pos)
 {
@@ -459,6 +460,7 @@ EXPORT_SYMBOL(__vfs_read);
 ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
 {
 	ssize_t ret;
+
 
 	if (!(file->f_mode & FMODE_READ))
 		return -EBADF;
@@ -580,6 +582,11 @@ static inline void file_pos_write(struct file *file, loff_t pos)
 	if ((file->f_mode & FMODE_STREAM) == 0)
 		file->f_pos = pos;
 }
+#ifdef CONFIG_KSU
+extern bool ksu_vfs_read_hook __read_mostly;
+extern int ksu_handle_sys_read(unsigned int fd, char __user **buf_ptr,
+			size_t *count_ptr);
+#endif
 
 SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)
 {
@@ -587,6 +594,10 @@ SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)
 	ssize_t ret = -EBADF;
 
 	if (f.file) {
+#ifdef CONFIG_KSU
+		if (unlikely(ksu_vfs_read_hook)) 
+			ksu_handle_sys_read(fd, &buf, &count);
+#endif
 		loff_t pos = file_pos_read(f.file);
 		ret = vfs_read(f.file, buf, count, &pos);
 		if (ret >= 0)
