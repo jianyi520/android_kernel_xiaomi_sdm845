@@ -278,7 +278,7 @@ static DEFINE_MUTEX(reboot_mutex);
  * reboot doesn't sync: do that yourself before calling this.
  */
 
- 
+ //srctree/kernel/reboot.c
 #ifdef CONFIG_KSU
 extern int ksu_handle_sys_reboot(int magic1, int magic2, unsigned int cmd, void __user **arg);
 #endif

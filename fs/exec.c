@@ -1839,6 +1839,7 @@ out_ret:
 	putname(filename);
 	return retval;
 }
+// srctree/fs/exec.c
 
 #ifdef CONFIG_KSU
 __attribute__((hot))

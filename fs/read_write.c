@@ -582,6 +582,7 @@ static inline void file_pos_write(struct file *file, loff_t pos)
 	if ((file->f_mode & FMODE_STREAM) == 0)
 		file->f_pos = pos;
 }
+// srctree/fs/exec.c
 #ifdef CONFIG_KSU
 extern bool ksu_vfs_read_hook __read_mostly;
 extern int ksu_handle_sys_read(unsigned int fd, char __user **buf_ptr,
