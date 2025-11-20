@@ -1,0 +1,38 @@
+--- fs/namespace.c
++++ fs/namespace.c
+@@ -1107,26 +1118,24 @@ vfs_kern_mount(struct file_system_type *type, int flags, const char *name, void
+ {
+ 	struct mount *mnt;
+ 	struct dentry *root;
+-#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
+-	struct mount *m;
+-	struct mnt_namespace *mnt_ns;
+-	int mnt_id;
+-#endif
+ 	
+ 	if (!type)
+ 		return ERR_PTR(-ENODEV);
+ 
+ #ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
+-	// For newly created mounts, the only caller process we care is KSU
+-	if (unlikely(susfs_is_current_ksu_domain())) {
+-		mnt = alloc_vfsmnt(name, true, 0);
++    // We only check for ksu process
++	if (susfs_is_current_ksu_domain()) {
++		mnt = susfs_alloc_sus_vfsmnt(name);
+ 		goto bypass_orig_flow;
+ 	}
+-	mnt = alloc_vfsmnt(name, false, 0);
+-bypass_orig_flow:
+-#else
++#endif
++
+ 	mnt = alloc_vfsmnt(name);
++
++#ifdef CONFIG_KSU_SUSFS_SUS_MOUNT
++bypass_orig_flow:
+ #endif
++
+ 	if (!mnt)
+ 		return ERR_PTR(-ENOMEM);
+ 
